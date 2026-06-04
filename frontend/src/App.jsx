@@ -668,7 +668,7 @@ function Grading() {
       <PageHeader eyebrow="Results processing" title="Grading scale" description="Configure grade boundaries used for averages and report cards." />
       <Alert message={state.message} />
       <Alert message={state.error} type="error" />
-      <section className="two-column">
+      <section className="two-column grading-layout">
         <Card title="Add grade band">
           <form onSubmit={create} className="form-grid">
             <Field label="Label"><input name="label" required placeholder="A" /></Field>
@@ -684,14 +684,16 @@ function Grading() {
           <div className="stack">
             {state.data.map((grade) => (
               <form key={grade.id} onSubmit={(event) => update(event, grade.id)} className="grade-editor">
-                <input name="label" defaultValue={grade.label} required />
-                <input name="minScore" type="number" defaultValue={grade.minScore} required />
-                <input name="maxScore" type="number" defaultValue={grade.maxScore} required />
-                <input name="points" type="number" defaultValue={grade.points} required />
-                <input name="sortOrder" type="number" defaultValue={grade.sortOrder} required />
-                <input name="remark" defaultValue={grade.remark || ""} />
-                <button className="btn"><Save size={15} />Save</button>
-                <button type="button" className="btn danger" onClick={() => remove(grade.id)}><Trash2 size={15} />Delete</button>
+                <Field label="Label"><input name="label" defaultValue={grade.label} required /></Field>
+                <Field label="Min"><input name="minScore" type="number" defaultValue={grade.minScore} required /></Field>
+                <Field label="Max"><input name="maxScore" type="number" defaultValue={grade.maxScore} required /></Field>
+                <Field label="Points"><input name="points" type="number" defaultValue={grade.points} required /></Field>
+                <Field label="Order"><input name="sortOrder" type="number" defaultValue={grade.sortOrder} required /></Field>
+                <Field label="Remark"><input name="remark" defaultValue={grade.remark || ""} /></Field>
+                <div className="grade-actions">
+                  <button className="btn"><Save size={15} />Save</button>
+                  <button type="button" className="btn danger" onClick={() => remove(grade.id)}><Trash2 size={15} />Delete</button>
+                </div>
               </form>
             ))}
           </div>

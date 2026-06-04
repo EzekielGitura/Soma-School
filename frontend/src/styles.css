@@ -312,6 +312,15 @@ td small,
   margin-bottom: 1.5rem;
 }
 
+.two-column > * {
+  min-width: 0;
+}
+
+.grading-layout {
+  align-items: start;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+}
+
 .card {
   margin-bottom: 1.5rem;
   overflow: hidden;
@@ -494,12 +503,36 @@ td small,
   align-items: center;
 }
 
-.grade-editor,
 .report-filters {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr)) auto auto;
   gap: 0.75rem;
   align-items: center;
+}
+
+.grade-editor {
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  align-items: end;
+}
+
+.grade-editor .field {
+  min-width: 0;
+}
+
+.grade-editor .field:nth-child(6) {
+  grid-column: span 2;
+}
+
+.grade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.grade-actions .btn {
+  white-space: nowrap;
 }
 
 .report-filters {
@@ -616,6 +649,14 @@ td small,
   .report-filters,
   .form-grid.three {
     grid-template-columns: 1fr;
+  }
+
+  .grade-actions {
+    justify-content: stretch;
+  }
+
+  .grade-actions .btn {
+    flex: 1;
   }
 }
 
