@@ -22,7 +22,7 @@ const navItems = [
   { to: "/grading", label: "Grading", icon: Scale },
 ];
 
-const schoolLogo = "/soma_logo.jpg";
+const schoolLogo = "/soma-school-logo.png";
 
 export function Layout({ children }) {
   const [menuOpen, setMenuOpen] = useState(() => window.innerWidth >= 980);

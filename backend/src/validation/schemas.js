@@ -50,15 +50,15 @@ export const scoreSchema = z.object({
   term: requiredText("Term").max(24),
   academicYear: z.coerce.number().int().min(2024).max(2100),
   catScore: z.coerce.number().min(0).max(30),
-  examScore: z.coerce.number().min(0).max(70),
+  examScore: z.coerce.number().min(0).max(100),
   remarks: optionalText,
 });
 
 export const gradeBoundarySchema = z
   .object({
     label: requiredText("Grade label").max(8).transform((value) => value.toUpperCase()),
-    minScore: z.coerce.number().min(0).max(100),
-    maxScore: z.coerce.number().min(0).max(100),
+    minScore: z.coerce.number().min(0).max(130),
+    maxScore: z.coerce.number().min(0).max(130),
     points: z.coerce.number().int().min(0).max(12),
     remark: optionalText,
     sortOrder: z.coerce.number().int().min(1).max(50),

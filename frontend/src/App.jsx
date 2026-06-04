@@ -511,6 +511,7 @@ function Subjects() {
 
 function Scores() {
   const [filters, setFilters] = useState({ streamId: "", subjectId: "", term: "Term 1", academicYear: "2026" });
+  const [selectedStudentId, setSelectedStudentId] = useState("");
   const state = useApi(
     async () => ({
       streams: await apiRequest("/streams"),
@@ -526,6 +527,7 @@ function Scores() {
   async function create(event) {
     try {
       await submitForm(event, "/scores");
+      setSelectedStudentId("");
       state.setMessage("Score recorded.");
       state.reload();
     } catch (err) {
@@ -565,28 +567,36 @@ function Scores() {
 
   if (state.loading) return <Spinner />;
 
+  const selectedStudent = state.data.students.find((student) => student.id === selectedStudentId);
+  const subjectsForSelectedStudent = selectedStudent
+    ? subjectsForStream(state.data.subjects, selectedStudent.classStreamId)
+    : [];
+  const subjectsForSelectedStream = filters.streamId
+    ? subjectsForStream(state.data.subjects, filters.streamId)
+    : state.data.subjects;
+
   return (
     <>
       <PageHeader eyebrow="Assessment scoring" title="Scores" description="Record CAT and exam marks, update score records, and view subject positions." />
       <Alert message={state.message} />
       <Alert message={state.error} type="error" />
       <section className="two-column">
-        <Card title="Record score" subtitle="CAT max 30, exam max 70.">
+        <Card title="Record score" subtitle="CAT max 30, exam max 100.">
           <form onSubmit={create} className="form-grid">
-            <Field label="Student"><StudentSelect students={state.data.students} /></Field>
-            <Field label="Subject"><SubjectSelect subjects={state.data.subjects} /></Field>
+            <Field label="Student"><StudentSelect students={state.data.students} value={selectedStudentId} onChange={setSelectedStudentId} /></Field>
+            <Field label="Subject"><SubjectSelect subjects={subjectsForSelectedStudent} disabled={!selectedStudentId} /></Field>
             <Field label="Term"><TermSelect /></Field>
             <Field label="Academic year"><input name="academicYear" type="number" defaultValue="2026" required /></Field>
             <Field label="CAT score"><input name="catScore" type="number" min="0" max="30" step="0.01" required /></Field>
-            <Field label="Exam score"><input name="examScore" type="number" min="0" max="70" step="0.01" required /></Field>
+            <Field label="Exam score"><input name="examScore" type="number" min="0" max="100" step="0.01" required /></Field>
             <Field label="Remarks"><textarea name="remarks" rows="3" /></Field>
             <button className="btn primary"><Plus size={16} />Record score</button>
           </form>
         </Card>
         <Card title="Class performance by subject">
           <form onSubmit={loadPerformance} className="form-grid">
-            <Field label="Class stream"><Select value={filters.streamId} onChange={(value) => setFilters({ ...filters, streamId: value })} items={state.data.streams} /></Field>
-            <Field label="Subject"><Select value={filters.subjectId} onChange={(value) => setFilters({ ...filters, subjectId: value })} items={state.data.subjects} labelKey="name" /></Field>
+            <Field label="Class stream"><Select value={filters.streamId} onChange={(value) => setFilters({ ...filters, streamId: value, subjectId: "" })} items={state.data.streams} /></Field>
+            <Field label="Subject"><Select value={filters.subjectId} onChange={(value) => setFilters({ ...filters, subjectId: value })} items={subjectsForSelectedStream} labelKey="name" /></Field>
             <Field label="Term"><select value={filters.term} onChange={(event) => setFilters({ ...filters, term: event.target.value })}><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></Field>
             <Field label="Academic year"><input value={filters.academicYear} onChange={(event) => setFilters({ ...filters, academicYear: event.target.value })} /></Field>
             <button className="btn">View ranking</button>
@@ -605,7 +615,7 @@ function Scores() {
               <strong>{score.firstName} {score.lastName} | {score.subjectName}</strong>
               <small>{score.classStreamName} | {score.term} {score.academicYear}</small>
               <input name="catScore" type="number" min="0" max="30" step="0.01" defaultValue={score.catScore} />
-              <input name="examScore" type="number" min="0" max="70" step="0.01" defaultValue={score.examScore} />
+              <input name="examScore" type="number" min="0" max="100" step="0.01" defaultValue={score.examScore} />
               <input name="remarks" defaultValue={score.remarks || ""} />
               <b>{formatScore(score.totalScore)}</b>
               <button className="btn"><Save size={15} />Update</button>
@@ -802,21 +812,27 @@ function Select({ name, items, defaultValue = "", value, onChange, required, lab
   );
 }
 
-function StudentSelect({ students }) {
+function StudentSelect({ students, value, onChange }) {
   return (
-    <select name="studentId" required defaultValue="">
+    <select name="studentId" required defaultValue={value === undefined ? "" : undefined} value={value} onChange={onChange ? (event) => onChange(event.target.value) : undefined}>
       <option value="" disabled>Select student</option>
       {students.map((student) => <option key={student.id} value={student.id}>{student.admissionNo} - {fullName(student)} ({student.classStreamName})</option>)}
     </select>
   );
 }
 
-function SubjectSelect({ subjects }) {
+function SubjectSelect({ subjects, disabled = false }) {
   return (
-    <select name="subjectId" required defaultValue="">
-      <option value="" disabled>Select subject</option>
+    <select name="subjectId" required defaultValue="" disabled={disabled}>
+      <option value="" disabled>{disabled ? "Select a student first" : "Select subject"}</option>
       {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.code} - {subject.name}</option>)}
     </select>
+  );
+}
+
+function subjectsForStream(subjects, streamId) {
+  return subjects.filter((subject) =>
+    subject.streams?.some((stream) => stream.id === streamId),
   );
 }
 

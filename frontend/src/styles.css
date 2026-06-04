@@ -151,9 +151,9 @@ td small,
 
 .brand-icon img {
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
 }
 
 .brand-copy,

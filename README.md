@@ -29,7 +29,7 @@ db/         PostgreSQL schema and seed SQL files
 - Register, view, update, delete, and filter students by stream.
 - Create, update, delete, and assign subjects to streams.
 - Record CAT and exam scores per student and subject.
-- Validate CAT scores from 0-30 and exam scores from 0-70.
+- Validate CAT scores from 0-30 and exam scores from 0-100.
 - Prevent duplicate score submissions for the same student, subject, term, and academic year.
 - Calculate totals, averages, grades, subject positions, and overall class positions.
 - Configure grading scales.
@@ -179,7 +179,7 @@ The React frontend is deployed on Netlify. It handles screens, forms, tables, an
 
 The Express backend is deployed on Vercel. It exposes REST APIs under `/api`, validates request data with Zod, queries PostgreSQL using the `pg` package, and returns JSON to the frontend.
 
-PostgreSQL stores the school data in normalized tables. The join table `stream_subjects` connects subjects to class streams. The `assessment_scores` table has a unique constraint on student, subject, term, and academic year, which prevents duplicate score submissions.
+PostgreSQL stores the school data in normalized tables. The join table `stream_subjects` connects subjects to class streams, so different streams can offer different subject combinations. The `assessment_scores` table has a unique constraint on student, subject, term, and academic year, which prevents duplicate score submissions.
 
 Results are processed in the backend. The backend calculates totals, averages, grades, subject positions, and class positions, then sends the processed data to React.
 
