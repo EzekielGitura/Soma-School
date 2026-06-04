@@ -14,14 +14,22 @@ import { handleError } from "./utils/http.js";
 
 export const app = express();
 
+const localClientOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+
+function allowedClientOrigins() {
+  return new Set([
+    ...localClientOrigins,
+    ...(process.env.CLIENT_ORIGIN || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean),
+  ]);
+}
+
 app.use(
   cors({
     origin(origin, callback) {
-      const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
-        .split(",")
-        .map((value) => value.trim());
-
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedClientOrigins().has(origin)) {
         callback(null, true);
         return;
       }
