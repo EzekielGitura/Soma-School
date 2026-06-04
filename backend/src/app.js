@@ -9,6 +9,7 @@ import { scoresRouter } from "./routes/scores.js";
 import { streamsRouter } from "./routes/streams.js";
 import { studentsRouter } from "./routes/students.js";
 import { subjectsRouter } from "./routes/subjects.js";
+import { query } from "./db/pool.js";
 import { handleError } from "./utils/http.js";
 
 export const app = express();
@@ -33,6 +34,15 @@ app.use(express.json());
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", service: "soma-school-api" });
+});
+
+app.get("/api/health/db", async (req, res, next) => {
+  try {
+    await query("SELECT 1");
+    res.json({ status: "ok", database: "connected" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use("/api/dashboard", dashboardRouter);

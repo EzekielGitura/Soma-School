@@ -127,13 +127,7 @@ https://your-backend-name.vercel.app/api/health
 
 ### 3. Frontend on Netlify
 
-Deploy the `frontend` folder to Netlify.
-
-Set the Netlify base directory to:
-
-```text
-frontend
-```
+Deploy this repository to Netlify. The root `netlify.toml` handles the frontend build.
 
 Set the Netlify build command to:
 
@@ -144,7 +138,7 @@ npm run build
 Set the Netlify publish directory to:
 
 ```text
-dist
+frontend/dist
 ```
 
 Set this Netlify environment variable:
