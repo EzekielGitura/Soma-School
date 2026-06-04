@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "frontend/dist"
 
+[build.environment]
+  VITE_API_URL = "https://soma-school-backend.vercel.app/api"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
