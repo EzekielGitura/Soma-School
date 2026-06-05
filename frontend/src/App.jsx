@@ -51,12 +51,13 @@ function useApi(load, deps = [], initialData = null) {
 
 async function submitForm(event, path, options = {}) {
   event.preventDefault();
-  const data = formToObject(event.currentTarget);
+  const form = event.currentTarget;
+  const data = formToObject(form);
   await apiRequest(path, {
     method: options.method || "POST",
     body: options.map ? options.map(data) : data,
   });
-  if (options.reset !== false) event.currentTarget.reset();
+  if (options.reset !== false) form.reset();
 }
 
 function Dashboard() {
